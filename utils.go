@@ -43,8 +43,7 @@ func date(s string) time.Time {
 		mm, _ := strconv.Atoi(r3[4])
 		return time.Date(now.Year(), time.Month(m), d, h, mm, 0, 0, now.Location())
 	default:
-		t, _ := time.Parse("2006-01-02 15:04", s)
-		t = t.In(now.Location())
+		t, _ := time.ParseInLocation("2006-01-02 15:04", s, now.Location())
 		return t
 	}
 }
