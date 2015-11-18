@@ -24,7 +24,8 @@ import (
 	"github.com/PuerkitoBio/goquery"
 )
 
-const wb = "http://service.weibo.com/widget/widget_blog.php?uid=%s"
+// Base URL of weibo page to fetch
+const WB_BASE = "http://service.weibo.com/widget/widget_blog.php?uid=%s"
 
 // User is the struct of weibo user
 type User struct {
@@ -47,7 +48,7 @@ type Post struct {
 
 // Get the latest weibo information by the uid of user
 func Get(uid string) (user User, err error) {
-	doc, err := goquery.NewDocument(fmt.Sprintf(wb, uid))
+	doc, err := goquery.NewDocument(fmt.Sprintf(WB_BASE, uid))
 	if err != nil {
 		return User{}, err
 	}
