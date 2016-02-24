@@ -3,7 +3,7 @@ package main
 import (
 	"fmt"
 
-	"github.com/jqs7/getwb"
+	"github.com/jqs7/wbget"
 )
 
 func main() {
