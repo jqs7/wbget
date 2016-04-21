@@ -13,7 +13,7 @@
 //You should have received a copy of the GNU General Public License
 //along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-package getwb
+package wbget
 
 import (
 	"fmt"
@@ -54,43 +54,43 @@ func Get(uid string) (user User, err error) {
 	}
 	doc.Find("#widget_wapper.mib_wgt.wdAuto div.wgtBox").
 		Each(func(i int, s *goquery.Selection) {
-		s.Find("div.wgtTop div.userInfo div.userNm.txt_b").
-			Each(func(i int, s *goquery.Selection) {
-			user.Name = s.Text()
-		})
-		s.Find(`div.wgtMain div#widget_content_wapper.wgtContent
-		div#content_all.wgtList div.wgtCell div.wgtCell_con`).
-			Each(func(i int, s *goquery.Selection) {
-			p := Post{}
-			s.Find("div.wgtCell_txtBot span.wgtCell_tm a.link_d").
+			s.Find("div.wgtTop div.userInfo div.userNm.txt_b").
 				Each(func(i int, s *goquery.Selection) {
-				p.Time = date(s.Text())
-				p.Link, _ = s.Attr("href")
-			})
-			s.Find("p.wgtCell_txt").
-				Each(func(i int, s *goquery.Selection) {
-				s.Find("a img.wgt_img").Each(func(i int, s *goquery.Selection) {
-					p.Thumbnail, _ = s.Attr("src")
+					user.Name = s.Text()
 				})
-				tmp := strings.Split(s.Text(), "\n")
-				out := []string{}
-				for _, v := range tmp {
-					v = strings.TrimSpace(v)
-					if v != "" {
-						out = append(out, v)
-					}
-				}
-				if len(out) > 1 {
-					reg := regexp.MustCompile(`转发了(.*)的微博：`).FindStringSubmatch(out[0])
-					p.RepostFrom = reg[1]
-					p.Repost = strings.TrimPrefix(out[1], "转发理由：")
-					p.Text = strings.TrimPrefix(out[0], reg[0])
-				} else {
-					p.Text = out[0]
-				}
-			})
-			user.Posts = append(user.Posts, p)
+			s.Find(`div.wgtMain div#widget_content_wapper.wgtContent
+		div#content_all.wgtList div.wgtCell div.wgtCell_con`).
+				Each(func(i int, s *goquery.Selection) {
+					p := Post{}
+					s.Find("div.wgtCell_txtBot span.wgtCell_tm a.link_d").
+						Each(func(i int, s *goquery.Selection) {
+							p.Time = date(s.Text())
+							p.Link, _ = s.Attr("href")
+						})
+					s.Find("p.wgtCell_txt").
+						Each(func(i int, s *goquery.Selection) {
+							s.Find("a img.wgt_img").Each(func(i int, s *goquery.Selection) {
+								p.Thumbnail, _ = s.Attr("src")
+							})
+							tmp := strings.Split(s.Text(), "\n")
+							out := []string{}
+							for _, v := range tmp {
+								v = strings.TrimSpace(v)
+								if v != "" {
+									out = append(out, v)
+								}
+							}
+							if len(out) > 1 {
+								reg := regexp.MustCompile(`转发了(.*)的微博：`).FindStringSubmatch(out[0])
+								p.RepostFrom = reg[1]
+								p.Repost = strings.TrimPrefix(out[1], "转发理由：")
+								p.Text = strings.TrimPrefix(out[0], reg[0])
+							} else {
+								p.Text = out[0]
+							}
+						})
+					user.Posts = append(user.Posts, p)
+				})
 		})
-	})
 	return user, nil
 }
